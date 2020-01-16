@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import './App.css';
-import SearchSection from './ui/components/sections/SearchSection';
-import ResultSection from './ui/components/sections/ResultSection';
+import SearchSection from './ui/sections/SearchSection';
+import ResultSection from './ui/sections/ResultSection';
 
 export type Project = {
-  id: string | number,
+  id: string,
   title: string,
   author: string,
   icon?: string
@@ -29,6 +29,8 @@ const App: React.FC = () => {
       <SearchSection 
         onGooglePlayProjectSelect={onGooglePlayProjectSelect}
         onGithubProjectSelect={onGithubProjectSelect}
+        githubProject={selectedGithubProject}
+        googlePlayProject={selectedGooglePlayProject}
       />
       <ResultSection 
         githubProject={selectedGithubProject}

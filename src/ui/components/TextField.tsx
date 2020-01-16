@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { HTMLProps } from 'react';
 
 type Props = {
   value: string;
-  onChange: (text: string) => void;
-}
+} & HTMLProps<HTMLInputElement>
 const TextField: React.FC<Props> = ({
   onChange,
   value
@@ -11,7 +10,7 @@ const TextField: React.FC<Props> = ({
   return (
     <input
       value={value}
-      onChange={({target: {value}}) => onChange(value)}
+      onChange={onChange}
     />
   );
 };
