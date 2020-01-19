@@ -4,6 +4,7 @@ import ProjectList from '../components/ProjectList';
 import styled from 'styled-components';
 import { Project } from '../../App';
 import GooglePlay from '../../googlePlay/GooglePlay';
+import Github from '../../github/Github';
 
 const ListContainer = styled.div`
   display: flex;
@@ -24,7 +25,7 @@ const SearchSection: React.FC<Props> = ({onGooglePlayProjectSelect, onGithubProj
   const onSearch = useCallback((project: string) => {
     setShowResults(true);
     GooglePlay.get(project).then(setGooglePlayProjects);
-    // TODO fetch projects by project value
+    Github.getInstance().searchByName(project).then(setGithubProjects);
   }, []);
 
   const onReset = useCallback(() => {

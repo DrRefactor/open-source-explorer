@@ -3,6 +3,7 @@ import { Project } from '../../App';
 import ProjectList from '../components/ProjectList';
 import styled from 'styled-components';
 import GooglePlay from '../../googlePlay/GooglePlay';
+import Github from '../../github/Github';
 
 type Props = {
   githubProject?: Project,
@@ -18,11 +19,10 @@ const ResultSection: React.FC<Props> = ({githubProject, googlePlayProject}) => {
   const [googlePlayProjects, setGooglePlayProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    if (!githubProject) {
-      setGithubProjects([])
+    setGithubProjects([]);
+    if (githubProject) {
+      Github.getInstance().getSimilarRepositories(githubProject.id).then(setGithubProjects);
     }
-    // TODO fetch similar github projects
-
   }, [githubProject]);
 
   useEffect(() => {

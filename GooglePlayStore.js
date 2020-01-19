@@ -45,7 +45,6 @@ function findSimilar(id) {
   return gplay.similar({
     appId: id,
   });
-
 }
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
