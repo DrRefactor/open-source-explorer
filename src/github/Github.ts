@@ -1,9 +1,6 @@
-import axios from "axios";
 import { Project } from "../App";
+import { GithubCache } from "./GithubCache";
 
-const GITHUB_API = 'https://api.github.com';
-
-const githubAxios = axios.create();
 // https://create-react-app.dev/docs/adding-custom-environment-variables/
 const token = process.env.REACT_APP_GITHUB_TOKEN;
 
@@ -31,17 +28,17 @@ class Github {
     return uniqueBy<Project>([...androidRepos, ...androidAppRepos], (p) => p.id);
   }
   private async fetchByNameAndTopic(name: string, topic: string): Promise<Project[]> {
-    const response = await githubAxios.get<{items: GithubRepository[]}>(GITHUB_API + `/search/repositories?q=${name}+topic:${topic}`);
+    const response = await GithubCache.get<{items: GithubRepository[]}>(`search/repositories?q=${name}+topic:${topic}`);
     return response.data.items.map(mapToProject);
   }
   private async getCollaborators(fullName: string): Promise<string[]> {
-    const response = await githubAxios.get(GITHUB_API + `/repos/${fullName}/contributors`);
+    const response = await GithubCache.get(`repos/${fullName}/contributors`);
     return response.data.map((c: {login: string}) => c.login);
   }
   private async getUserRepositories(user: string): Promise<Project[]> {
-    const response = await githubAxios
+    const response = await GithubCache
       .get<{items: ({repository: GithubRepository})[]}>(
-        `https://api.github.com/search/commits?q=committer:${user}`, 
+        `search/commits?q=committer:${user}`, 
         {headers: {
           'Accept': 'application/vnd.github.cloak-preview',
           'Authorization': token
