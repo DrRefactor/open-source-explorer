@@ -13,7 +13,7 @@ type GithubRepository = {
   }
 }
 
-type AccumulatedProject = Project & {count: number};
+export type AccumulatedProject = Project & {count: number};
 // 1. by repo name
 // 2. by user (get collaboration network)
 // 3. search within users (by user)
@@ -44,13 +44,13 @@ class Github {
           'Authorization': token
         }}
       );
-    const repositories: Project[] = response.data?.items.map(response => mapToProject(response.repository));
+    const repositories: Project[] = response.data?.items?.map(response => mapToProject(response.repository));
 
     return uniqueBy<Project>(repositories || [], (r) => r.id);
   }
   async getSimilarRepositories(fullName: string) {
     const collaborators = await this.getCollaborators(fullName);
-    const repositories = await Promise.all(collaborators.slice(0, 10).map(this.getUserRepositories));
+    const repositories = await Promise.all(collaborators.slice(0, 15).map(this.getUserRepositories));
   
     return repositories
       .flat()
@@ -63,7 +63,7 @@ class Github {
         }
         return acc;
       }, [] as AccumulatedProject[])
-      .sort((lhs, rhs) => lhs.count - rhs.count);
+      .sort((lhs, rhs) => rhs.count - lhs.count);
   }
 }
 

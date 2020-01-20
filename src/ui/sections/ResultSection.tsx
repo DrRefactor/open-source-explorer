@@ -3,8 +3,8 @@ import { Project } from '../../App';
 import ProjectList from '../components/ProjectList';
 import styled from 'styled-components';
 import GooglePlay from '../../googlePlay/GooglePlay';
-import Github from '../../github/Github';
 import { useCountdown } from '../hooks/useCountdown';
+import Github, { AccumulatedProject } from '../../github/Github';
 
 type Props = {
   githubProject?: Project,
@@ -16,7 +16,7 @@ const Container = styled.div`
 `
 
 const ResultSection: React.FC<Props> = ({githubProject, googlePlayProject}) => {
-  const [githubProjects, setGithubProjects] = useState<Project[]>([]);
+  const [githubProjects, setGithubProjects] = useState<AccumulatedProject[]>([]);
   const [googlePlayProjects, setGooglePlayProjects] = useState<Project[]>([]);
   const [githubTimer, startGithubTimer] = useCountdown(60);
 

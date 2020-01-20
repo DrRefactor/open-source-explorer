@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Project } from '../../App';
+import { AccumulatedProject } from '../../github/Github';
 
 type Props = {
   title: string,
-  projects: Project[],
+  projects: (Project | AccumulatedProject)[],
   onProjectClick?: (project: Project) => void,
   selectedProject?: Project,
   hide?: boolean
@@ -45,7 +46,7 @@ const ProjectList: React.FC<Props> = (props) => {
 
 type ElementProps = {
   onClick?: (project: Project) => void,
-  project: Project,
+  project: Project | AccumulatedProject,
   selected?: boolean
 }
 
@@ -54,6 +55,7 @@ const ElementContainer = styled.div<{selected?: boolean}>`
   display: flex;
   padding: 3px 0;
   cursor: pointer;
+  align-items: center;
   background-color: ${({selected}) => selected ? '#eee' : 'none'};
   &:hover {
     background-color: #eee;
@@ -80,6 +82,17 @@ const Text = styled.div`
   font-size: 14px;
 `
 
+const Count = styled.span`
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  margin-right: 6px;
+  background-color: #ccc;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+`
+
 const Element: React.FC<ElementProps> = ({onClick, project, selected}) => {
   const {icon, title, author} = project;
   return (
@@ -95,6 +108,7 @@ const Element: React.FC<ElementProps> = ({onClick, project, selected}) => {
           {author}
         </Text>
       </Details>
+      {'count' in project && (<Count>{project?.count}</Count>)}
     </ElementContainer>
   )
 }
