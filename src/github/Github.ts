@@ -29,7 +29,7 @@ class Github {
   }
   private async fetchByNameAndTopic(name: string, topic: string): Promise<Project[]> {
     const response = await GithubCache.get<{items: GithubRepository[]}>(`search/repositories?q=${name}+topic:${topic}`);
-    return response.data.items.map(mapToProject);
+    return response.data.items?.map(mapToProject) || [];
   }
   private async getCollaborators(fullName: string): Promise<string[]> {
     const response = await GithubCache.get(`repos/${fullName}/contributors`);
@@ -44,9 +44,9 @@ class Github {
           'Authorization': token
         }}
       );
-    const repositories: Project[] = response.data.items.map(response => mapToProject(response.repository));
+    const repositories: Project[] = response.data?.items.map(response => mapToProject(response.repository));
 
-    return uniqueBy<Project>(repositories, (r) => r.id);
+    return uniqueBy<Project>(repositories || [], (r) => r.id);
   }
   async getSimilarRepositories(fullName: string) {
     const collaborators = await this.getCollaborators(fullName);
