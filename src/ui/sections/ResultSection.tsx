@@ -4,6 +4,7 @@ import ProjectList from '../components/ProjectList';
 import styled from 'styled-components';
 import GooglePlay from '../../googlePlay/GooglePlay';
 import Github from '../../github/Github';
+import { useCountdown } from '../hooks/useCountdown';
 
 type Props = {
   githubProject?: Project,
@@ -17,13 +18,17 @@ const Container = styled.div`
 const ResultSection: React.FC<Props> = ({githubProject, googlePlayProject}) => {
   const [githubProjects, setGithubProjects] = useState<Project[]>([]);
   const [googlePlayProjects, setGooglePlayProjects] = useState<Project[]>([]);
+  const [githubTimer, startGithubTimer] = useCountdown(60);
 
   useEffect(() => {
     setGithubProjects([]);
     if (githubProject) {
-      Github.getInstance().getSimilarRepositories(githubProject.id).then(setGithubProjects);
+      Github.getInstance()
+        .getSimilarRepositories(githubProject.id)
+        .then(setGithubProjects)
+        .catch(startGithubTimer);
     }
-  }, [githubProject]);
+  }, [githubProject, startGithubTimer]);
 
   useEffect(() => {
     setGooglePlayProjects([])
@@ -35,7 +40,7 @@ const ResultSection: React.FC<Props> = ({githubProject, googlePlayProject}) => {
   return (
     <Container>
         <ProjectList
-          title={'Aplikacje podobne'}
+          title={`Aplikacje podobne${githubTimer ? ' (spróbuj ponownie za: ' + githubTimer + ' sekund)' : ''}`}
           projects={githubProjects}
           hide={!githubProject}
         />

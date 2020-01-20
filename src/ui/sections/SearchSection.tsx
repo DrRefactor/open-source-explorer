@@ -1,10 +1,11 @@
-import React, { useState, useCallback, FormEvent } from 'react';
+import React, { useState, useCallback, FormEvent, useEffect } from 'react';
 import TextField from '../components/TextField';
 import ProjectList from '../components/ProjectList';
 import styled from 'styled-components';
 import { Project } from '../../App';
 import GooglePlay from '../../googlePlay/GooglePlay';
 import Github from '../../github/Github';
+import { useCountdown } from '../hooks/useCountdown';
 
 const ListContainer = styled.div`
   display: flex;
@@ -21,12 +22,16 @@ const SearchSection: React.FC<Props> = ({onGooglePlayProjectSelect, onGithubProj
   const [githubProjects, setGithubProjects] = useState<Project[]>([]);
   const [googlePlayProjects, setGooglePlayProjects] = useState<Project[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [githubTimer, startGithubTimer] = useCountdown(60);
 
   const onSearch = useCallback((project: string) => {
     setShowResults(true);
     GooglePlay.get(project).then(setGooglePlayProjects);
-    Github.getInstance().searchByName(project).then(setGithubProjects);
-  }, []);
+    Github.getInstance()
+      .searchByName(project)
+      .then(setGithubProjects)
+      .catch(startGithubTimer);
+  }, [startGithubTimer]);
 
   const onReset = useCallback(() => {
     setShowResults(false);
@@ -47,7 +52,7 @@ const SearchSection: React.FC<Props> = ({onGooglePlayProjectSelect, onGithubProj
       {showResults && (
         <ListContainer>
           <ProjectList
-            title={'Github'}
+            title={`Github${githubTimer ? ' (spróbuj ponownie za: ' + githubTimer + ' sekund)' : ''}`}
             onProjectClick={onGithubProjectSelect}
             projects={githubProjects}
             selectedProject={githubProject}
