@@ -6,18 +6,19 @@ const githubAxios = axios.create({
 });
 
 const Firebase = axios.create({
-  baseURL: "https://console.firebase.google.com/project/tass-ae677/database/data/search/repositories"
+  baseURL: 'https://tass-ae677.firebaseio.com/'
 })
 
 export const GithubCache = {
-  get: async function<T = any, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
-    const res = await Firebase.get<T, R>(url + '.json');
-    if (res) {
-      return res;
+  get: async function<T = any, R extends AxiosResponse<T> = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
+    const encodedUrl = encodeURIComponent(url) + '.json';
+    const res = await Firebase.get<T, AxiosResponse<R>>(encodedUrl);
+    if (res.data) {
+      return res.data;
     }
 
     const response = await githubAxios.get<T, R>(url, config);
-    Firebase.put(url + '.json', response);
+    Firebase.put(encodedUrl, response);
     return response;
   }
 }
